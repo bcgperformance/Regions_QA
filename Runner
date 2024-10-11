@@ -47,10 +47,10 @@ jobs:
         run: neoload workspaces use "K&D - I and I"
         
       - name: "Do Test Settings"
-        run: neoload test-settings --zone HtRnd --lgs 1 --scenario 'scenario1' createorpatch "NeoGithub_test_01"
+        run: neoload test-settings --zone HtRnd --lgs 1 --scenario 'scenario1' createorpatch "Regions_QA_Test"
 
       - name: "Upload Project"
-        run: neoload project --path Regions_QA_For_Git.zip upload NeoGithub_test_01
+        run: neoload project --path Regions_QA_For_Git.zip upload Regions_QA_Test
 
       - name: "Neoload run test"
         run: >
