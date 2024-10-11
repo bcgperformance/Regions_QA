@@ -2,7 +2,7 @@ name: Regions_QA_Runner
 
 on:
   schedule:
-    - cron: '5 19 * * *'
+    - cron: '15/ * * * *'
   workflow_dispatch:
     inputs:
       Scenario:
