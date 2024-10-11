@@ -2,29 +2,7 @@ name: Regions_QA_Runner
 
 on:
   schedule:
-    - cron: '35 18 * * *'
-  workflow_dispatch:
-    inputs:
-      Scenario:
-        description: 'Test Scenario to Execute'
-        required: true
-        default: 'scenario1'
-        type: choice
-        options:
-          - scenario1
-          - scenario2
-          - scenario3
-          - scenario4
-          - scenario5
-      LoadGenerator:
-        description: 'Choose number of Worker machine'
-        required: true
-        default: '1'
-        type: choice
-        options:
-          - '1'
-          - '2'
-          - '3'     
+    - cron: '55 18 * * *'
 
 jobs:
   build:
