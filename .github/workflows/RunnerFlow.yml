@@ -1,0 +1,85 @@
+name: Regions_QA_Runner
+
+on:
+  schedule:
+    - cron: '20 18 * * *'
+  workflow_dispatch:
+    inputs:
+      Scenario:
+        description: 'Test Scenario to Execute'
+        required: true
+        default: 'scenario1'
+        type: choice
+        options:
+          - scenario1
+          - scenario2
+          - scenario3
+          - scenario4
+          - scenario5
+      LoadGenerator:
+        description: 'Choose number of Worker machine'
+        required: true
+        default: '1'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'     
+
+jobs:
+  build:
+    name: Neoload CLI github action
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: "Install Neoload CLI"
+        run: pip3 install -U neoload
+
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
+
+      - name: "Prepare Neoload Test"
+        env:
+          NEOLOAD_LOGIN: ${{secrets.NEOLOAD_LOGIN}}
+        run: neoload login $NEOLOAD_LOGIN
+
+      - name: Use workspace
+        run: neoload workspaces use "K&D - I and I"
+        
+      - name: "Do Test Settings"
+        run: neoload test-settings --zone HtRnd --lgs 1 --scenario 'scenario1' createorpatch "Regions_QA_Test"
+
+      - name: "Upload Project"
+        run: neoload project --path Regions_QA_For_Git.zip upload Regions_QA_Test
+
+      - name: "Neoload run test"
+        run: >
+          neoload --batch run
+          --detached
+          --external-url $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+          --external-url-label "Github Action Run $GITHUB_RUN_NUMBER"
+          --name "Github pipeline performance test - Github build #$GITHUB_RUN_NUMBER"
+          --description "Automated Performance Tests"
+
+      - name: Fast-Fail
+        run: neoload fastfail --max-failure 2 slas cur
+
+      - name: Wait till result collates
+        run: neoload wait cur
+
+      - name: Get report
+        if: always()
+        run: neoload logs-url cur >result.txt
+
+      - name: Get NL Report Link
+        if: always()
+        id: nl_report
+        run: echo "report=$(cat result.txt)" >> $GITHUB_OUTPUT
+
+      - name: GitHub Actions Slack Integration
+        if: always()
+        uses: slackapi/slack-github-action@v1.24.0
+        env: 
+         SLACK_WEBHOOK_URL: ${{secrets.SLACK_WEBHOOK_LINK}}
+        with:
+         payload: "{\"RunStatus\":\"${{ job.status }}\",\"Workflow\":\"${{ github.workflow }}\",\"RunDetails_Report\":\"${{github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\",\"Report\":\"${{steps.nl_report.outputs.report}}\"}"
