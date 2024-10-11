@@ -2,7 +2,7 @@ name: Github_Neoload_Test_01
 
 on:
   schedule:
-    #- cron: '* * * * *'
+    #- cron: '20 18 * * *'
   workflow_dispatch:
     inputs:
       Scenario:
