@@ -1,4 +1,4 @@
-name: Github_Neoload_Test_01
+name: Regions_QA_Runner
 
 on:
   schedule:
