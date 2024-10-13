@@ -59,8 +59,8 @@ jobs:
           --detached
           --external-url $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
           --external-url-label "Github Action Run $GITHUB_RUN_NUMBER"
-          --name "Github pipeline performance test - Github build #$GITHUB_RUN_NUMBER"
-          --description "Automated Performance Tests"
+          --name "NeoGit Test - Build #$GITHUB_RUN_NUMBER"
+          --description "NeoGit Performance Tests"
 
       - name: Fast-Fail
         run: neoload fastfail --max-failure 2 slas cur
